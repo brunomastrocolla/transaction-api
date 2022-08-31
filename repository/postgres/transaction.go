@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"github.com/jmoiron/sqlx"
-	"transaction-api/internal/entity"
+	"transaction-api/entity"
 )
 
 type Transaction struct {
