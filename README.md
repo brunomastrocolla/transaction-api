@@ -36,11 +36,11 @@ go build -o ./transaction-api ./cmd/transaction-api/*.go
 ## Docker Run
 1. Building docker images
 ```bash
-docker-compose -f docker/docker-compose.yml build
+docker-compose -f docker-compose.yml build
 ```
 2. Running
 ```bash
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f docker-compose.yml up -d
 ```
 
 ## Testing
