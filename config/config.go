@@ -21,7 +21,7 @@ func NewConfig() Config {
 		DatabaseURL:          getString("DATABASE_URL", ""),
 		DatabaseRetryDelay:   time.Duration(getInt32("DATABASE_RETRY_DELAY", 5)) * time.Second,
 		DatabaseMaxRetries:   getInt32("DATABASE_MAX_RETRIES", 10),
-		DatabaseMigrationDir: getString("DATABASE_MIGRATION_DIR", "file:///db/migrations"),
+		DatabaseMigrationDir: getString("DATABASE_MIGRATION_DIR", "file://db/migrations"),
 		LogLevel:             getString("LOG_LEVEL", "DEBUG"),
 		HTTPServerAddress:    getString("HTTP_SERVER_ADDRESS", ":8080"),
 	}
