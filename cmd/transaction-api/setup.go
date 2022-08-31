@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"transaction-api/internal/config"
-	http3 "transaction-api/internal/handler/http"
-	postgres2 "transaction-api/internal/repository/postgres"
+	"transaction-api/config"
+	http2 "transaction-api/handler/http"
+	"transaction-api/repository/postgres"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -82,15 +82,15 @@ func setupRouter(db *sqlx.DB) *chi.Mux {
 		return http.HandlerFunc(fn)
 	})
 
-	accountRepo := postgres2.NewAccountRepository(db)
-	accountHandler := http3.NewAccountHandler(accountRepo)
+	accountRepo := postgres.NewAccountRepository(db)
+	accountHandler := http2.NewAccountHandler(accountRepo)
 	router.Route("/accounts", func(r chi.Router) {
 		r.Post("/", accountHandler.Post)
 		r.Get("/{id}", accountHandler.Get)
 	})
 
-	transactionRepo := postgres2.NewTransactionRepository(db)
-	transactionHandler := http3.NewTransactionHandler(transactionRepo)
+	transactionRepo := postgres.NewTransactionRepository(db)
+	transactionHandler := http2.NewTransactionHandler(transactionRepo)
 	router.Route("/transactions", func(r chi.Router) {
 		r.Post("/", transactionHandler.Post)
 	})

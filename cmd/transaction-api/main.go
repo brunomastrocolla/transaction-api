@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"transaction-api/internal/config"
-	"transaction-api/internal/repository/postgres"
+	"transaction-api/config"
+	"transaction-api/repository/postgres"
 
 	"go.uber.org/zap"
 )
