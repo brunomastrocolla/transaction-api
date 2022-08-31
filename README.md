@@ -60,5 +60,5 @@ curl -i --request GET --url http://localhost:8080/accounts/1
 curl -i --request POST \
   --url http://localhost:8080/transactions \
   --header 'Content-Type: application/json' \
-  --data '{ "account_id": 1, "operation_type_id": 4, "amount": 12345 }'
+  --data '{ "account_id": 1, "operation_type_id": 4, "amount": 123.45 }'
 ```
