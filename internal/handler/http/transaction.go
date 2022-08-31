@@ -3,12 +3,11 @@ package http
 import (
 	"net/http"
 	"time"
+	"transaction-api/internal/entity"
+	"transaction-api/internal/handler/http/payloads"
+	"transaction-api/internal/repository/postgres"
 
 	"go.uber.org/zap"
-
-	"transaction-api/entity"
-	"transaction-api/handler/http/payloads"
-	"transaction-api/repository/postgres"
 )
 
 type Transaction struct {
