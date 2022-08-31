@@ -1,0 +1,13 @@
+package repository
+
+import "transaction-api/entity"
+
+type AccountRepository interface {
+	Create(account *entity.Account) error
+	Find(id int32) (entity.Account, error)
+}
+
+type TransactionRepository interface {
+	Create(transaction *entity.Transaction) error
+	Find(id int32) (entity.Transaction, error)
+}

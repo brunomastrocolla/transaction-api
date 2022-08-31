@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: docker/postgres.Dockerfile
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+
+  transaction-api-migrate:
+    build:
+      context: .
+      dockerfile: docker/transaction-api.Dockerfile
+    environment:
+      DATABASE_URL: 'postgres://user:pass@postgres:5432/transaction_api?sslmode=disable'
+      DATABASE_MIGRATION_DIR: 'file:///db/migrations'
+    command: migrate
+    depends_on:
+      - postgres
+
+  transaction-api-server:
+    build:
+      context: .
+      dockerfile: docker/transaction-api.Dockerfile
+    environment:
+      DATABASE_URL: 'postgres://user:pass@postgres:5432/transaction_api?sslmode=disable'
+      HTTP_SERVER_ADDRESS: ':8080'
+    command: server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - transaction-api-migrate
