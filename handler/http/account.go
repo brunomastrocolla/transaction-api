@@ -1,19 +1,18 @@
 package http
 
 import (
+	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 	"time"
 	"transaction-api/entity"
 	"transaction-api/handler/http/payloads"
-	"transaction-api/repository/postgres"
-
-	"github.com/go-chi/chi/v5"
-	"go.uber.org/zap"
+	"transaction-api/repository"
 )
 
 type Account struct {
-	accountRepo postgres.Account
+	accountRepo repository.AccountRepository
 }
 
 func (a Account) Post(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +65,7 @@ func (a Account) Get(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, accountResponse, http.StatusOK)
 }
 
-func NewAccountHandler(accountRepo postgres.Account) Account {
+func NewAccountHandler(accountRepo repository.AccountRepository) Account {
 	return Account{
 		accountRepo: accountRepo,
 	}

@@ -1,17 +1,16 @@
 package http
 
 import (
+	"go.uber.org/zap"
 	"net/http"
 	"time"
 	"transaction-api/entity"
 	"transaction-api/handler/http/payloads"
-	"transaction-api/repository/postgres"
-
-	"go.uber.org/zap"
+	"transaction-api/repository"
 )
 
 type Transaction struct {
-	transactionRepo postgres.Transaction
+	transactionRepo repository.TransactionRepository
 }
 
 func (t Transaction) Post(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +39,7 @@ func (t Transaction) Post(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, []byte(``), http.StatusOK)
 }
 
-func NewTransactionHandler(transactionRepo postgres.Transaction) Transaction {
+func NewTransactionHandler(transactionRepo repository.TransactionRepository) Transaction {
 	return Transaction{
 		transactionRepo: transactionRepo,
 	}
