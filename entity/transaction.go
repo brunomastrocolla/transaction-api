@@ -7,6 +7,7 @@ type Transaction struct {
 	AccountID       int64     `db:"account_id"`
 	OperationTypeID int32     `db:"operation_type_id"`
 	Amount          float64   `db:"amount"`
+	Balance         float64   `db:"balance"`
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
 }
