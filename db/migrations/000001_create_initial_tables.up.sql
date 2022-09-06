@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS transactions(
     account_id BIGINT NOT NULL,
     operation_type_id INT NOT NULL,
     amount FLOAT8 NOT NULL,
+    balance FLOAT8 NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     FOREIGN KEY (account_id) REFERENCES accounts (id),
