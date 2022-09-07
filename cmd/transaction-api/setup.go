@@ -5,9 +5,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"transaction-api/config"
-	http2 "transaction-api/handler/http"
-	"transaction-api/repository/postgres"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -15,6 +12,11 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"transaction-api/config"
+	http2 "transaction-api/handler/http"
+	"transaction-api/repository/postgres"
+	"transaction-api/service"
 )
 
 func setupDatabase(config *config.Config) (*sqlx.DB, error) {
@@ -83,14 +85,16 @@ func setupRouter(db *sqlx.DB) *chi.Mux {
 	})
 
 	accountRepo := postgres.NewAccountRepository(db)
-	accountHandler := http2.NewAccountHandler(accountRepo)
+	accountService := service.NewAccountService(accountRepo)
+	accountHandler := http2.NewAccountHandler(accountService)
 	router.Route("/accounts", func(r chi.Router) {
 		r.Post("/", accountHandler.Post)
 		r.Get("/{id}", accountHandler.Get)
 	})
 
 	transactionRepo := postgres.NewTransactionRepository(db)
-	transactionHandler := http2.NewTransactionHandler(transactionRepo)
+	transactionService := service.NewTransactionService(transactionRepo)
+	transactionHandler := http2.NewTransactionHandler(transactionService)
 	router.Route("/transactions", func(r chi.Router) {
 		r.Post("/", transactionHandler.Post)
 	})

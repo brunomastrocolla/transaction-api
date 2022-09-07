@@ -1,10 +1,11 @@
 package config
 
 import (
-	_ "github.com/joho/godotenv/autoload"
 	"os"
 	"strconv"
 	"time"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type Config struct {

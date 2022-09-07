@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"github.com/jmoiron/sqlx"
+
 	"transaction-api/entity"
 )
 
@@ -30,7 +31,7 @@ func (a Account) Create(account *entity.Account) error {
 	return query.Get(&account.ID, account)
 }
 
-func (a Account) Find(id int32) (entity.Account, error) {
+func (a Account) Find(id int64) (entity.Account, error) {
 	account := entity.Account{}
 	sqlStatement := `
 		SELECT *

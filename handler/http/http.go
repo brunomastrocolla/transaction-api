@@ -9,19 +9,22 @@ import (
 	"go.uber.org/zap"
 )
 
-func writeResponse(w http.ResponseWriter, body interface{}, statusCode int) {
+func writeResponse(w http.ResponseWriter, body interface{}, statusCode int) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
 	data, err := json.Marshal(body)
 	if err != nil {
 		zap.L().Error("json-marshal-error", zap.Error(err))
-		return
+		return err
 	}
 
 	if _, err := w.Write(data); err != nil {
 		zap.L().Error("http-response-writer-error", zap.Error(err))
+		return err
 	}
+
+	return nil
 }
 
 func readRequest(r *http.Request, into interface{}) error {

@@ -1,37 +1,35 @@
 package http
 
 import (
-	"github.com/go-chi/chi/v5"
-	"go.uber.org/zap"
 	"net/http"
 	"strconv"
-	"time"
+
+	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
+
 	"transaction-api/entity"
 	"transaction-api/handler/http/payloads"
-	"transaction-api/repository"
+	"transaction-api/service"
 )
 
 type Account struct {
-	accountRepo repository.AccountRepository
+	accountService service.AccountService
 }
 
 func (a Account) Post(w http.ResponseWriter, r *http.Request) {
 	accountRequest := payloads.AccountRequest{}
 	if err := readRequest(r, &accountRequest); err != nil {
-		writeResponse(w, []byte(``), http.StatusBadRequest)
+		_ = writeResponse(w, []byte(``), http.StatusBadRequest)
 		return
 	}
 
-	now := time.Now()
 	account := entity.Account{
 		DocumentNumber: accountRequest.DocumentNumber,
-		CreatedAt:      now,
-		UpdatedAt:      now,
 	}
 
-	if err := a.accountRepo.Create(&account); err != nil {
+	if err := a.accountService.Create(&account); err != nil {
 		zap.L().Error("account-store-error", zap.Error(err))
-		writeResponse(w, []byte(``), http.StatusInternalServerError)
+		_ = writeResponse(w, []byte(``), http.StatusInternalServerError)
 		return
 	}
 	zap.L().Info("account-created", zap.Any("account", account))
@@ -40,21 +38,21 @@ func (a Account) Post(w http.ResponseWriter, r *http.Request) {
 		AccountID:      account.ID,
 		DocumentNumber: account.DocumentNumber,
 	}
-	writeResponse(w, accountResponse, http.StatusOK)
+	_ = writeResponse(w, accountResponse, http.StatusOK)
 }
 
 func (a Account) Get(w http.ResponseWriter, r *http.Request) {
 	accountID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
 		zap.L().Error("parse-account-id-error", zap.Error(err))
-		writeResponse(w, []byte(``), http.StatusBadRequest)
+		_ = writeResponse(w, []byte(``), http.StatusBadRequest)
 		return
 	}
 
-	account, err := a.accountRepo.Find(int32(accountID))
+	account, err := a.accountService.Find(accountID)
 	if err != nil {
 		zap.L().Error("account-find-error: %w", zap.Error(err))
-		writeResponse(w, []byte(``), http.StatusNotFound)
+		_ = writeResponse(w, []byte(``), http.StatusNotFound)
 		return
 	}
 
@@ -62,11 +60,11 @@ func (a Account) Get(w http.ResponseWriter, r *http.Request) {
 		AccountID:      account.ID,
 		DocumentNumber: account.DocumentNumber,
 	}
-	writeResponse(w, accountResponse, http.StatusOK)
+	_ = writeResponse(w, accountResponse, http.StatusOK)
 }
 
-func NewAccountHandler(accountRepo repository.AccountRepository) Account {
+func NewAccountHandler(accountService service.AccountService) Account {
 	return Account{
-		accountRepo: accountRepo,
+		accountService: accountService,
 	}
 }
