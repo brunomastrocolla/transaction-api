@@ -1,3 +1,5 @@
 .idea/
 .env
 /transaction-api
+.golangci-lint
+.go-oif

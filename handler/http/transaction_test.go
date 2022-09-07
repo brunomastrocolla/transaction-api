@@ -1,169 +1,83 @@
 package http
 
 import (
-	"bytes"
-	"encoding/json"
+	"errors"
+	"net/http"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"gotest.tools/assert"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
+
 	"transaction-api/entity"
 	"transaction-api/handler/http/payloads"
 	"transaction-api/mocks"
 )
 
-func doRequest(t *testing.T, method, url string, request interface{}, response interface{},
-	handler func(w http.ResponseWriter, r *http.Request)) {
+func TestTransactionHandler(t *testing.T) {
 
-	reqBody, err := json.Marshal(request)
-	assert.NilError(t, err)
-
-	httpReq, err := http.NewRequest(method, url, bytes.NewReader(reqBody))
-	assert.NilError(t, err)
-
-	httpRec := httptest.NewRecorder()
-	handler(httpRec, httpReq)
-
-	reqResult := httpRec.Result()
-	assert.Equal(t, http.StatusOK, reqResult.StatusCode)
-
-	resBody, err := ioutil.ReadAll(reqResult.Body)
-	assert.NilError(t, err)
-
-	err = json.Unmarshal(resBody, &response)
-	assert.NilError(t, err)
-}
-
-func TestTransaction(t *testing.T) {
-
-	t.Run("Test Transaction 1", func(t *testing.T) {
+	t.Run("Test Post 1 - Success", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
-		transactionRepoMock := mocks.NewMockTransactionRepository(ctrl)
-		transactionHandler := NewTransactionHandler(transactionRepoMock)
+		transactionServiceMock := mocks.NewMockTransactionService(ctrl)
+		transactionHandler := NewTransactionHandler(transactionServiceMock)
 
-		transactionRepoMock.EXPECT().FindByAccountID(gomock.Any()).Return(
-			[]entity.Transaction{
-				{
-					ID:              1,
-					AccountID:       1,
-					OperationTypeID: 1,
-					Amount:          -50,
-					Balance:         -50,
-					CreatedAt:       time.Time{},
-					UpdatedAt:       time.Time{},
-				},
-				{
-					ID:              2,
-					AccountID:       1,
-					OperationTypeID: 1,
-					Amount:          -23.5,
-					Balance:         -23.5,
-					CreatedAt:       time.Time{},
-					UpdatedAt:       time.Time{},
-				},
-				{
-					ID:              3,
-					AccountID:       1,
-					OperationTypeID: 1,
-					Amount:          -18.7,
-					Balance:         -18.7,
-					CreatedAt:       time.Time{},
-					UpdatedAt:       time.Time{},
-				},
-			}, nil)
-		transactionRepoMock.EXPECT().Update(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(0), transaction.Balance)
-		}).Return(nil)
-		transactionRepoMock.EXPECT().Update(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(-13.5), transaction.Balance)
-		}).Return(nil)
-		transactionRepoMock.EXPECT().Update(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(-18.7), transaction.Balance)
-		}).Return(nil)
-		transactionRepoMock.EXPECT().Create(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(0), transaction.Balance)
-		}).Return(nil)
-
-		trans := payloads.TransactionRequest{
+		req := payloads.TransactionRequest{
 			AccountID:       1,
-			OperationTypeID: 4,
-			Amount:          60,
-		}
-
-		doRequest(t, "POST", "", trans, nil, transactionHandler.Post)
-
-	})
-
-	t.Run("Test Transaction 2", func(t *testing.T) {
-		ctrl := gomock.NewController(t)
-		transactionRepoMock := mocks.NewMockTransactionRepository(ctrl)
-		transactionHandler := NewTransactionHandler(transactionRepoMock)
-
-		transactionRepoMock.EXPECT().FindByAccountID(gomock.Any()).Return(
-			[]entity.Transaction{
-				{
-					ID:              1,
-					AccountID:       1,
-					OperationTypeID: 1,
-					Amount:          -50,
-					Balance:         0,
-					CreatedAt:       time.Time{},
-					UpdatedAt:       time.Time{},
-				},
-				{
-					ID:              2,
-					AccountID:       1,
-					OperationTypeID: 1,
-					Amount:          -23.5,
-					Balance:         -13.5,
-					CreatedAt:       time.Time{},
-					UpdatedAt:       time.Time{},
-				},
-				{
-					ID:              3,
-					AccountID:       1,
-					OperationTypeID: 1,
-					Amount:          -18.7,
-					Balance:         -18.7,
-					CreatedAt:       time.Time{},
-					UpdatedAt:       time.Time{},
-				},
-				{
-					ID:              4,
-					AccountID:       1,
-					OperationTypeID: 4,
-					Amount:          60,
-					Balance:         0,
-					CreatedAt:       time.Time{},
-					UpdatedAt:       time.Time{},
-				},
-			}, nil)
-		transactionRepoMock.EXPECT().Update(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(0), transaction.Balance)
-		}).Return(nil)
-		transactionRepoMock.EXPECT().Update(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(0), transaction.Balance)
-		}).Return(nil)
-		transactionRepoMock.EXPECT().Update(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(0), transaction.Balance)
-		}).Return(nil)
-		/*transactionRepoMock.EXPECT().Update(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(0), transaction.Balance)
-		}).Return(nil)*/
-		transactionRepoMock.EXPECT().Create(gomock.Any()).Do(func(transaction *entity.Transaction) {
-			assert.Equal(t, float64(67.8), transaction.Balance)
-		}).Return(nil)
-
-		trans := payloads.TransactionRequest{
-			AccountID:       1,
-			OperationTypeID: 4,
+			OperationTypeID: 1,
 			Amount:          100,
 		}
 
-		doRequest(t, "POST", "", trans, nil, transactionHandler.Post)
+		transactionServiceMock.EXPECT().UpdateBalance(gomock.Any()).Return(nil)
+		transactionServiceMock.EXPECT().Create(gomock.Any()).Do(func(transaction *entity.Transaction) {
+			transaction.ID = 1
+			assert.Equal(t, req.AccountID, transaction.AccountID)
+			assert.Equal(t, req.AccountID, transaction.AccountID)
+			assert.Equal(t, req.OperationTypeID, transaction.OperationTypeID)
+			assert.Equal(t, -req.Amount, transaction.Amount)
+			assert.Equal(t, -req.Amount, transaction.Balance)
+		}).Return(nil)
 
+		doRequest(t, "POST", "/accounts", req, nil, nil, http.StatusOK, transactionHandler.Post)
+	})
+
+	t.Run("Test Post 2 - Error", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		transactionServiceMock := mocks.NewMockTransactionService(ctrl)
+		transactionHandler := NewTransactionHandler(transactionServiceMock)
+
+		doRequest(t, "POST", "/accounts", "{", nil, nil, http.StatusBadRequest, transactionHandler.Post)
+	})
+
+	t.Run("Test Post 3 - Error", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		transactionServiceMock := mocks.NewMockTransactionService(ctrl)
+		transactionHandler := NewTransactionHandler(transactionServiceMock)
+
+		req := payloads.TransactionRequest{
+			AccountID:       1,
+			OperationTypeID: 1,
+			Amount:          100,
+		}
+
+		err := errors.New("update-balance")
+		transactionServiceMock.EXPECT().UpdateBalance(gomock.Any()).Return(err)
+
+		doRequest(t, "POST", "/accounts", req, nil, nil, http.StatusInternalServerError, transactionHandler.Post)
+	})
+
+	t.Run("Test Post 4 - Error", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		transactionServiceMock := mocks.NewMockTransactionService(ctrl)
+		transactionHandler := NewTransactionHandler(transactionServiceMock)
+
+		req := payloads.TransactionRequest{
+			AccountID:       1,
+			OperationTypeID: 1,
+			Amount:          100,
+		}
+
+		transactionServiceMock.EXPECT().UpdateBalance(gomock.Any()).Return(nil)
+		transactionServiceMock.EXPECT().Create(gomock.Any()).Return(errors.New("create-error"))
+
+		doRequest(t, "POST", "/accounts", req, nil, nil, http.StatusInternalServerError, transactionHandler.Post)
 	})
 }

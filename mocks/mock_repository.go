@@ -49,7 +49,7 @@ func (mr *MockAccountRepositoryMockRecorder) Create(account interface{}) *gomock
 }
 
 // Find mocks base method.
-func (m *MockAccountRepository) Find(id int32) (entity.Account, error) {
+func (m *MockAccountRepository) Find(id int64) (entity.Account, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Find", id)
 	ret0, _ := ret[0].(entity.Account)

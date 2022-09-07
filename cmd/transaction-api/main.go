@@ -6,10 +6,11 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"transaction-api/config"
-	"transaction-api/repository/postgres"
 
 	"go.uber.org/zap"
+
+	"transaction-api/config"
+	"transaction-api/repository/postgres"
 )
 
 func runServer(config *config.Config) error {

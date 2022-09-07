@@ -8,10 +8,11 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/golang/mock v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/joho/godotenv v1.3.0
-	github.com/urfave/cli/v2 v2.11.2
-	go.uber.org/zap v1.17.0
+	github.com/joho/godotenv v1.4.0
+	github.com/urfave/cli/v2 v2.14.1
+	go.uber.org/zap v1.23.0
 	gotest.tools v2.2.0+incompatible
+	gotest.tools/v3 v3.3.0
 )
 
 require (

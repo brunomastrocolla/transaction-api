@@ -19,7 +19,7 @@ docker-compose -f docker-compose.yml build
 docker-compose -f docker-compose.yml up -d
 ```
 
-## Testing
+## Integration Test
 1. Create new account 
 ```bash
 curl -i --request POST \
@@ -39,6 +39,16 @@ curl -i --request POST \
   --data '{ "account_id": 1, "operation_type_id": 4, "amount": 123.45 }'
 ```
 
+## Unit Test
+1. Generate mocks
+```bash
+make mock
+```
+2. Running unit tests
+```bash
+make test
+```
+
 ## Development
 1. Setup postgres database
 ```bash
@@ -52,13 +62,18 @@ vim .env
 ```
 3. Build
 ```bash
-go build -o ./transaction-api ./cmd/transaction-api/*.go
+make build
 ```
 4. Run database migrate
 ```bash
-./transaction-api migrate
+make migrate
 ```
 4. Run server
 ```bash
-./transaction-api server
+make run
 ```
+4. Run linter
+```bash
+make lint
+```
+
