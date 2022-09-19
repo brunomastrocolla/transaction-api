@@ -18,7 +18,7 @@ func (t Transaction) Create(transaction *entity.Transaction) error {
 	return t.transactionRepo.Create(transaction)
 }
 
-func (t Transaction) Find(id int32) (entity.Transaction, error) {
+func (t Transaction) Find(id int64) (entity.Transaction, error) {
 	return t.transactionRepo.Find(id)
 }
 

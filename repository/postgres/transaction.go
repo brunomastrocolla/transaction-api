@@ -37,7 +37,7 @@ func (t Transaction) Create(transaction *entity.Transaction) error {
 	return query.Get(&transaction.ID, transaction)
 }
 
-func (t Transaction) Find(id int32) (entity.Transaction, error) {
+func (t Transaction) Find(id int64) (entity.Transaction, error) {
 	transaction := entity.Transaction{}
 	sqlStatement := `
 		SELECT *
