@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"transaction-api/repository"
 
 	"go.uber.org/zap"
 
@@ -58,10 +59,13 @@ func runMigrate(config *config.Config) error {
 	}
 	defer closeDatabase(db)
 
-	zap.L().Info("db-migrate-started", zap.String("migration-dir", config.DatabaseMigrationDir))
+	zap.L().Info("db-migrate-started", zap.String("migration-dir", config.DatabaseMigrationDir),
+		zap.String("migration-type", config.DatabaseMigrationType))
 
 	migrate := postgres.NewMigrationRepository(db)
-	if err := migrate.Migrate(config.DatabaseMigrationDir); err != nil {
+	migrationType := repository.MigrationType(config.DatabaseMigrationType)
+
+	if err = migrate.Migrate(config.DatabaseMigrationDir, migrationType); err != nil {
 		zap.L().Error("db-migrate-error", zap.Error(err))
 		return err
 	}

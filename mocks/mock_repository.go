@@ -7,6 +7,7 @@ package mocks
 import (
 	reflect "reflect"
 	entity "transaction-api/entity"
+	repository "transaction-api/repository"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -87,17 +88,17 @@ func (m *MockMigrationRepository) EXPECT() *MockMigrationRepositoryMockRecorder 
 }
 
 // Migrate mocks base method.
-func (m *MockMigrationRepository) Migrate(migrationDir string) error {
+func (m *MockMigrationRepository) Migrate(migrationDir string, migrationType repository.MigrationType) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Migrate", migrationDir)
+	ret := m.ctrl.Call(m, "Migrate", migrationDir, migrationType)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Migrate indicates an expected call of Migrate.
-func (mr *MockMigrationRepositoryMockRecorder) Migrate(migrationDir interface{}) *gomock.Call {
+func (mr *MockMigrationRepositoryMockRecorder) Migrate(migrationDir, migrationType interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Migrate", reflect.TypeOf((*MockMigrationRepository)(nil).Migrate), migrationDir)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Migrate", reflect.TypeOf((*MockMigrationRepository)(nil).Migrate), migrationDir, migrationType)
 }
 
 // MockTransactionRepository is a mock of TransactionRepository interface.
@@ -138,7 +139,7 @@ func (mr *MockTransactionRepositoryMockRecorder) Create(transaction interface{})
 }
 
 // Find mocks base method.
-func (m *MockTransactionRepository) Find(id int32) (entity.Transaction, error) {
+func (m *MockTransactionRepository) Find(id int64) (entity.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Find", id)
 	ret0, _ := ret[0].(entity.Transaction)

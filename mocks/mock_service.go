@@ -101,7 +101,7 @@ func (mr *MockTransactionServiceMockRecorder) Create(transaction interface{}) *g
 }
 
 // Find mocks base method.
-func (m *MockTransactionService) Find(id int32) (entity.Transaction, error) {
+func (m *MockTransactionService) Find(id int64) (entity.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Find", id)
 	ret0, _ := ret[0].(entity.Transaction)

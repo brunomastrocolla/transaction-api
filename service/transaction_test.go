@@ -56,7 +56,7 @@ func TestTransactionService(t *testing.T) {
 			UpdatedAt:       time.Now(),
 		}
 
-		transactionRepoMock.EXPECT().Find(int32(1)).Return(trans, nil)
+		transactionRepoMock.EXPECT().Find(int64(1)).Return(trans, nil)
 
 		transRepo, err := transactionService.Find(1)
 		assert.NilError(t, err)
